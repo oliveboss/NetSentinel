@@ -1,0 +1,30 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+.env/
+.envs/
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

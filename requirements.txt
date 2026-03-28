@@ -1,0 +1,6 @@
+pytest
+pytest-cov
+scapy
+pillow
+psutil
+tk

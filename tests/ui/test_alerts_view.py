@@ -3,14 +3,8 @@ import pytest
 from ui.alerts_view import AlertsView
 
 
-@pytest.mark.skipif(
-    pytest.importorskip("tkinter") is None,
-    reason="tkinter non disponible"
-)
-def test_alerts_view_add_and_clear(tmp_path):
-    import tkinter as tk
-    root = tk.Tk()
-    root.withdraw()
+def test_alerts_view_add_and_clear(tmp_path, tk_root):
+    root = tk_root
 
     view = AlertsView(root)
     view.add_alert("Test alert")
@@ -34,5 +28,3 @@ def test_alerts_view_add_and_clear(tmp_path):
 
     assert file_alerts.exists()
     assert file_info.exists()
-
-    root.destroy()

@@ -4,14 +4,8 @@ from unittest.mock import MagicMock
 from ui.widgets.modern_button import ModernButton
 
 
-@pytest.mark.skipif(
-    pytest.importorskip("tkinter") is None,
-    reason="tkinter non disponible"
-)
-def test_modern_button_click_hover_leave(tmp_path, monkeypatch):
-    import tkinter as tk
-    root = tk.Tk()
-    root.withdraw()
+def test_modern_button_click_hover_leave(tmp_path, monkeypatch, tk_root):
+    root = tk_root
 
     clicked = {"value": False}
 
@@ -29,5 +23,3 @@ def test_modern_button_click_hover_leave(tmp_path, monkeypatch):
 
     btn._on_leave(None)
     assert btn.cget("bg") == before
-
-    root.destroy()

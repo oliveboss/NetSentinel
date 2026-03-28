@@ -10,14 +10,8 @@ def test_theme_constants():
     assert BTN_START == "#0e639c"
 
 
-@pytest.mark.skipif(
-    pytest.importorskip("tkinter") is None,
-    reason="tkinter non disponible"
-)
-def test_modern_button_lighten_color(tmp_path, monkeypatch):
-    import tkinter as tk
-    root = tk.Tk()
-    root.withdraw()
+def test_modern_button_lighten_color(tmp_path, monkeypatch, tk_root):
+    root = tk_root
 
     called = {"click": False}
     def on_click():
@@ -33,4 +27,3 @@ def test_modern_button_lighten_color(tmp_path, monkeypatch):
     assert btn.cget("bg") != "#112233"
     btn._on_leave(None)
     assert btn.cget("bg") == "#112233"
-    root.destroy()

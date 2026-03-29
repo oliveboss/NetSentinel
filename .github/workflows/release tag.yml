@@ -80,7 +80,6 @@ Icon=NetSentinel
 Categories=Utility;
 EOF
 
-        
           if [ -f NetSentinel.png ]; then
             cp NetSentinel.png AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png || true
             cp NetSentinel.png AppDir/usr/share/icons/hicolor/128x128/apps/NetSentinel.png || true

@@ -73,13 +73,13 @@ jobs:
           mkdir -p AppDir/usr/share/icons/hicolor/128x128/apps
 
           cat > AppDir/NetSentinel.desktop <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=NetSentinel
-Exec=NetSentinel
-Icon=NetSentinel
-Categories=Utility;
-EOF
+          [Desktop Entry]
+          Type=Application
+          Name=NetSentinel
+          Exec=NetSentinel
+          Icon=NetSentinel
+          Categories=Utility;
+          EOF
 
           if [ -f NetSentinel.png ]; then
             cp NetSentinel.png AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png

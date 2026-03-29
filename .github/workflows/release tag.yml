@@ -119,41 +119,41 @@ jobs:
           path: NetSentinel-x86_64.AppImage
 
   release:
-  name: Create GitHub Release
-  runs-on: ubuntu-latest
-  needs: [build-windows, build-linux]
-  if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
-  steps:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-windows, build-linux]
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    steps:
 
-    # --- WINDOWS ARTIFACT ---
-    - name: Download Windows artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: NetSentinel-windows
-        path: .
+      # --- WINDOWS ARTIFACT ---
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: NetSentinel-windows
+          path: .
 
-    - name: Move Windows exe
-      run: mv NetSentinel-windows/NetSentinel.exe NetSentinel.exe
+      - name: Move Windows exe
+        run: mv NetSentinel-windows/NetSentinel.exe NetSentinel.exe
 
-    # --- LINUX ARTIFACT ---
-    - name: Download Linux artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: NetSentinel-linux
-        path: .
+      # --- LINUX ARTIFACT ---
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: NetSentinel-linux
+          path: .
 
-    - name: Move AppImage
-      run: mv NetSentinel-linux/NetSentinel-x86_64.AppImage NetSentinel-x86_64.AppImage
+      - name: Move AppImage
+        run: mv NetSentinel-linux/NetSentinel-x86_64.AppImage NetSentinel-x86_64.AppImage
 
-    # --- RELEASE ---
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ github.event.inputs.version || github.ref_name }}
-        name: NetSentinel ${{ github.event.inputs.version || github.ref_name }}
-        body: "🚀 NetSentinel IDS Release ${{ github.event.inputs.version || github.ref_name }}"
-        files: |
-          NetSentinel.exe
-          NetSentinel-x86_64.AppImage
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      # --- RELEASE ---
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version || github.ref_name }}
+          name: NetSentinel ${{ github.event.inputs.version || github.ref_name }}
+          body: "🚀 NetSentinel IDS Release ${{ github.event.inputs.version || github.ref_name }}"
+          files: |
+            NetSentinel.exe
+            NetSentinel-x86_64.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}

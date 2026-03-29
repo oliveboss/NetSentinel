@@ -137,6 +137,11 @@ jobs:
           name: NetSentinel-linux
           path: .
 
+      - name: Inspect downloaded artifacts
+        run: |
+          echo "=== artifact list ==="
+          find . -maxdepth 4 -type f -iname 'NetSentinel*' -print
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -145,6 +150,7 @@ jobs:
           body: "🚀 NetSentinel IDS Release ${{ github.event.inputs.version || github.ref_name }}"
           files: |
             dist/NetSentinel.exe
+            NetSentinel.exe
             NetSentinel-x86_64.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}

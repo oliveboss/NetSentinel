@@ -124,24 +124,34 @@ jobs:
     needs: [build-windows, build-linux]
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     steps:
+
+      # --- WINDOWS ARTIFACT ---
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
           name: NetSentinel-windows
           path: .
 
+      - name: Unzip Windows artifact
+        run: unzip NetSentinel-windows.zip -d NetSentinel-windows
+
       - name: Move Windows exe
         run: mv NetSentinel-windows/NetSentinel.exe NetSentinel.exe
 
+      # --- LINUX ARTIFACT ---
       - name: Download Linux artifact
         uses: actions/download-artifact@v4
         with:
           name: NetSentinel-linux
           path: .
 
+      - name: Unzip Linux artifact
+        run: unzip NetSentinel-linux.zip -d NetSentinel-linux
+
       - name: Move AppImage
         run: mv NetSentinel-linux/NetSentinel-x86_64.AppImage NetSentinel-x86_64.AppImage
 
+      # --- RELEASE ---
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:

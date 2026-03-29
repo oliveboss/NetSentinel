@@ -59,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libfuse2 fuse zip
+          sudo apt-get install -y libfuse2 fuse wget
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller
 
@@ -84,19 +84,33 @@ jobs:
           Categories=Utility;
           EOF
 
-                    if [ -f NetSentinel.png ]; then
-                      cp NetSentinel.png AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png || true
-                      cp NetSentinel.png AppDir/usr/share/icons/hicolor/128x128/apps/NetSentinel.png || true
-                    elif [ -f netsentinelApp.jpeg ]; then
-                      cp netsentinelApp.jpeg AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png || true
-                      cp netsentinelApp.jpeg AppDir/usr/share/icons/hicolor/128x128/apps/NetSentinel.png || true
-                    fi
+          # Copy icon if exists
+          if [ -f NetSentinel.png ]; then
+            cp NetSentinel.png AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png || true
+            cp NetSentinel.png AppDir/usr/share/icons/hicolor/128x128/apps/NetSentinel.png || true
+            cp NetSentinel.png AppDir/NetSentinel.png || true
+          elif [ -f netsentinelApp.jpeg ]; then
+            cp netsentinelApp.jpeg AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png || true
+            cp netsentinelApp.jpeg AppDir/usr/share/icons/hicolor/128x128/apps/NetSentinel.png || true
+            cp netsentinelApp.jpeg AppDir/NetSentinel.png || true
+          else
+            echo "No icon found in repo root; AppImage will be built without PNG icon."
+          fi
+
+          if [ -f netsentinel.ico ]; then
+            cp netsentinel.ico AppDir/ || true
+          fi
 
       - name: Create AppImage
         run: |
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
           ./appimagetool-x86_64.AppImage AppDir
+
+          # Rename automatically generated AppImage if needed
+          if [ ! -f NetSentinel-x86_64.AppImage ]; then
+            ls -1 *.AppImage 2>/dev/null | head -n1 | xargs -I{} mv {} NetSentinel-x86_64.AppImage
+          fi
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
@@ -111,24 +125,18 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     steps:
 
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      # --- WINDOWS ARTIFACT ---
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
           name: NetSentinel-windows
           path: .
 
-      # --- LINUX ARTIFACT ---
       - name: Download Linux artifact
         uses: actions/download-artifact@v4
         with:
           name: NetSentinel-linux
           path: .
 
-      # --- RELEASE ---
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -136,7 +144,7 @@ jobs:
           name: NetSentinel ${{ github.event.inputs.version || github.ref_name }}
           body: "🚀 NetSentinel IDS Release ${{ github.event.inputs.version || github.ref_name }}"
           files: |
-            NetSentinel.exe
+            dist/NetSentinel.exe
             NetSentinel-x86_64.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}

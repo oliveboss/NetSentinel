@@ -10,6 +10,7 @@ jobs:
   build-windows:
     name: Build Windows exe
     runs-on: windows-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,6 +41,7 @@ jobs:
     name: Build Linux AppImage
     runs-on: ubuntu-latest
     needs: build-windows
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,6 +56,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
+          sudo apt-get install -y libfuse2 fuse
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller
 
@@ -66,19 +69,17 @@ jobs:
 
       - name: Prepare desktop entry and icon
         run: |
-          # Create AppDir structure for icons
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
           mkdir -p AppDir/usr/share/icons/hicolor/128x128/apps
 
-          # Create .desktop file
-          cat > AppDir/NetSentinel.desktop <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=NetSentinel
-Exec=NetSentinel
-Icon=NetSentinel
-Categories=Utility;
-EOF
+          cat > AppDir/NetSentinel.desktop << 'EOF'
+          [Desktop Entry]
+          Type=Application
+          Name=NetSentinel
+          Exec=NetSentinel
+          Icon=NetSentinel
+          Categories=Utility;
+          EOF
 
           if [ -f NetSentinel.png ]; then
             cp NetSentinel.png AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png || true
@@ -92,7 +93,6 @@ EOF
             echo "No icon found in repo root; AppImage will be built without PNG icon."
           fi
 
-          # Keep ICO for Windows builds (optional copy)
           if [ -f netsentinel.ico ]; then
             cp netsentinel.ico AppDir/ || true
           fi
@@ -102,7 +102,7 @@ EOF
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
           ./appimagetool-x86_64.AppImage AppDir
-          # Normalize name
+
           if [ -f NetSentinel-x86_64.AppImage ]; then
             echo "AppImage ready: NetSentinel-x86_64.AppImage"
           else
@@ -120,33 +120,28 @@ EOF
     runs-on: ubuntu-latest
     needs: [build-windows, build-linux]
     if: startsWith(github.ref, 'refs/tags/v')
+
     steps:
-      - name: Download windows artifact
+      - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
           name: NetSentinel-windows
           path: .
 
-      - name: Download linux artifact
+      - name: Download Linux artifact
         uses: actions/download-artifact@v4
         with:
           name: NetSentinel-linux
           path: .
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@26994186c0ac3ef5cae75ac16aa32e8153525f77
-        with:
-          tag_name: ${{ github.ref }}
-          name: ${{ github.ref }}
-          body: "Release ${{ github.ref }} - NetSentinel"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload release assets
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body: "Release ${{ github.ref_name }} - NetSentinel"
           files: |
-            dist/NetSentinel.exe
+            NetSentinel.exe
             NetSentinel-x86_64.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

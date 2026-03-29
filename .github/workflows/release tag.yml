@@ -1,0 +1,153 @@
+name: Build and Release NetSentinel
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    name: Build Windows exe
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Build Windows exe
+        run: |
+          pyinstaller --onefile --windowed --name NetSentinel --icon=netsentinel.ico main.py
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetSentinel-windows
+          path: dist/NetSentinel.exe
+
+  build-linux:
+    name: Build Linux AppImage
+    runs-on: ubuntu-latest
+    needs: build-windows
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Build Linux binary
+        run: |
+          pyinstaller --onefile --name NetSentinel main.py
+          mkdir -p AppDir/usr/bin
+          cp dist/NetSentinel AppDir/usr/bin/NetSentinel
+          chmod +x AppDir/usr/bin/NetSentinel
+
+      - name: Prepare desktop entry and icon
+        run: |
+          # Create AppDir structure for icons
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          mkdir -p AppDir/usr/share/icons/hicolor/128x128/apps
+
+          # Create .desktop file
+          cat > AppDir/NetSentinel.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=NetSentinel
+Exec=NetSentinel
+Icon=NetSentinel
+Categories=Utility;
+EOF
+
+        
+          if [ -f NetSentinel.png ]; then
+            cp NetSentinel.png AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png || true
+            cp NetSentinel.png AppDir/usr/share/icons/hicolor/128x128/apps/NetSentinel.png || true
+            cp NetSentinel.png AppDir/NetSentinel.png || true
+          elif [ -f netsentinelApp.jpeg ]; then
+            cp netsentinelApp.jpeg AppDir/usr/share/icons/hicolor/256x256/apps/NetSentinel.png || true
+            cp netsentinelApp.jpeg AppDir/usr/share/icons/hicolor/128x128/apps/NetSentinel.png || true
+            cp netsentinelApp.jpeg AppDir/NetSentinel.png || true
+          else
+            echo "No icon found in repo root; AppImage will be built without PNG icon."
+          fi
+
+          # Keep ICO for Windows builds (optional copy)
+          if [ -f netsentinel.ico ]; then
+            cp netsentinel.ico AppDir/ || true
+          fi
+
+      - name: Create AppImage
+        run: |
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          ./appimagetool-x86_64.AppImage AppDir
+          # Normalize name
+          if [ -f NetSentinel-x86_64.AppImage ]; then
+            echo "AppImage ready: NetSentinel-x86_64.AppImage"
+          else
+            ls -1 *.AppImage 2>/dev/null | head -n1 | xargs -I{} mv {} NetSentinel-x86_64.AppImage
+          fi
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetSentinel-linux
+          path: NetSentinel-x86_64.AppImage
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-windows, build-linux]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: NetSentinel-windows
+          path: .
+
+      - name: Download linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: NetSentinel-linux
+          path: .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@26994186c0ac3ef5cae75ac16aa32e8153525f77
+        with:
+          tag_name: ${{ github.ref }}
+          name: ${{ github.ref }}
+          body: "Release ${{ github.ref }} - NetSentinel"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/NetSentinel.exe
+            NetSentinel-x86_64.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

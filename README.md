@@ -59,7 +59,7 @@ Détecte les tentatives de scan de ports sur un hôte.
 - Nombre de ports scanalisés sur un hôte dans une fenêtre de temps
 - Seuil configurable: 10 ports en 10 secondes
 
-**Impact:** ⚠️ Moyen - Reconnaissance du réseau
+**Impact:**  Moyen - Reconnaissance du réseau
 
 ---
 
@@ -70,7 +70,7 @@ Détecte les attaques par débordement de paquets SYN (attaque DoS).
 - Accumulation de paquets SYN d'une même source
 - Seuil configurable: 20 paquets SYN en 5 secondes
 
-**Impact:** 🔴 Critique - Attaque par déni de service
+**Impact:**  Critique - Attaque par déni de service
 
 ---
 
@@ -93,7 +93,7 @@ Détecte les connexions tentées vers des ports sensibles interdits.
 - **23** (Telnet)
 - **3389** (RDP)
 
-**Impact:** 🔴 Critique - Tentative d'accès non autorisé
+**Impact:**  Critique - Tentative d'accès non autorisé
 
 ---
 

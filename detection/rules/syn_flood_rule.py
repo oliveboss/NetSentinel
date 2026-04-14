@@ -22,6 +22,8 @@ class SynFloodRule:
         # Nettoyer les timestamps vieux de plus que time_window
         self.ip_syn_times[src_ip] = [t for t in self.ip_syn_times[src_ip] if now - t <= self.time_window]
 
+        print(f"DEBUG SYN: IP {src_ip}, flags: '{pkt.get('flags', 'NO_FLAGS')}', count: {len(self.ip_syn_times[src_ip])}/{self.syn_threshold}")
+
         if len(self.ip_syn_times[src_ip]) >= self.syn_threshold:
             self.ip_syn_times[src_ip].clear()
             return f"⚠ Possible SYN Flood détecté depuis {src_ip}"

@@ -4,7 +4,7 @@ NetSentinel est un **Système de Détection d'Intrusions (IDS)** léger et perfo
 
 ---
 
-## 📋 Table des matières
+##  Table des matières
 
 - [Vue d'ensemble](#vue-densemble)
 - [Fonctionnalités](#fonctionnalités)
@@ -22,7 +22,7 @@ NetSentinel est un **Système de Détection d'Intrusions (IDS)** léger et perfo
 
 ## 👁️ Vue d'ensemble
 
-NetSentinel est une application de surveillance réseau qui capture et analyse les paquets réseau pour détecter les patterns d'attaque courants. L'application dispose d'une **interface graphique moderne** (Tkinter) pour visualiser l'activité réseau et les alertes en temps réel.
+Il s'agit d'un logiciel de surveillance réseau qui capture et analyse les paquets réseau pour détecter les patterns d'attaque courants. L'application dispose d'une **interface graphique moderne** (Tkinter) pour visualiser l'activité réseau et les alertes en temps réel.
 
 ### Objectifs:
 - ✅ Capture en temps réel du trafic réseau
@@ -33,20 +33,20 @@ NetSentinel est une application de surveillance réseau qui capture et analyse l
 
 ---
 
-## 🎯 Fonctionnalités
+##  Fonctionnalités
 
 ### Interface Utilisateur
-- 📊 **Tableau de bord** avec statistiques en direct
-- 🚨 **Panneau d'alertes** pour les événements de sécurité
-- 🌐 **Vue du trafic** avec détails des connexions
-- 🎨 **Thème personnalisé** et interface moderne
-- 📈 **Statistiques réseau** en temps réel
+-  **Tableau de bord** avec statistiques en direct
+-  **Panneau d'alertes** pour les événements de sécurité
+-  **Vue du trafic** avec détails des connexions
+-  **Thème personnalisé** et interface moderne
+-  **Statistiques réseau** en temps réel
 
 ### Moteur de Détection
-- 🔍 Analyse multi-critères des paquets
-- ⏱️ Détection par fenêtres temporelles
-- 🎯 Règles configurables et adaptables
-- 📝 Logging complet des événements
+-  Analyse multi-critères des paquets
+-  Détection par fenêtres temporelles
+-  Règles configurables et adaptables
+-  Logging  des événements
 
 ---
 
@@ -97,7 +97,7 @@ Détecte les connexions tentées vers des ports sensibles interdits.
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 NetSentinel/
@@ -139,7 +139,7 @@ Paquets réseau → Sniffer → Rules Engine → Détections → UI → Alertes
 
 ---
 
-## 📦 Installation
+##  Installation
 
 ### Pré-requis
 - **Python 3.8+**
@@ -186,7 +186,7 @@ Paquets réseau → Sniffer → Rules Engine → Détections → UI → Alertes
 
 ---
 
-## 🚀 Utilisation
+##  Utilisation
 
 ### Lancer l'application
 
@@ -337,9 +337,9 @@ Le projet bénéficie d'un pipeline d'intégration continue automatisé:
 
 #### Sorties:
 
-- 📊 Rapport de tests pytest
-- 📈 Métriques SonarQube
-- 📦 Exécutable compilé (build/)
+-  Rapport de tests pytest
+-  Métriques SonarQube
+- Exécutable compilé (build/)
 
 ### Configuration SonarQube
 
@@ -362,13 +362,10 @@ Fichier: `sonar-project.properties`
 - ✅ Tests de sécurité
 - ✅ Monitoring des violations
 
-### Règles de sécurité
-
-Voir [Détections implémentées](#détections-implémentées) pour les règles de sécurité activées.
 
 ---
 
-## 🤝 Contribution
+##  Contribution
 
 ### Ajouter une nouvelle règle de détection
 
